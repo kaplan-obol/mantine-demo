@@ -1,20 +1,32 @@
-import "@mantine/core/styles.css";
-import Head from "next/head";
-import { MantineProvider } from "@mantine/core";
-import { theme } from "../theme";
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { useState } from 'react';
+import { MantineProvider, ColorSchemeProvider, ColorScheme } from '@mantine/core';
+import Layout from './layout';
 
-export default function App({ Component, pageProps }: any) {
+export default function App(props: AppProps) {
+  const { Component, pageProps } = props;
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('light')
+
+  const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
   return (
-    <MantineProvider theme={theme}>
+    <>
       <Head>
-        <title>Mantine Template</title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-        />
-        <link rel="shortcut icon" href="/favicon.svg" />
+        <title>Next for Mantine</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <Component {...pageProps} />
-    </MantineProvider>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{ colorScheme }}
+        >
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </MantineProvider >
+      </ColorSchemeProvider>
+    </>
   );
 }
